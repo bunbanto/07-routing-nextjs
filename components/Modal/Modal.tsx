@@ -1,26 +1,34 @@
-import css from './NoteModal.module.css';
-import NoteForm from '../NoteForm/NoteForm';
+import css from './Modal.module.css';
 import { useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 
 interface NoteModalProps {
-  onClose: () => void;
+  onClose?: () => void;
+  children?: React.ReactNode;
 }
 
-export default function NoteModal({ onClose }: NoteModalProps) {
+export default function NoteModal({ onClose, children }: NoteModalProps) {
+  const router = useRouter();
+
+  const handleClose = useCallback(() => {
+    onClose?.();
+    router.back();
+  }, [onClose, router]);
+
   const handleBackDropClick = useCallback(
     (evt: React.MouseEvent<HTMLDivElement>) => {
       if (evt.target === evt.currentTarget) {
-        onClose();
+        handleClose();
       }
     },
-    [onClose]
+    [handleClose]
   );
 
   useEffect(() => {
     function handleEscKey(evt: KeyboardEvent) {
       if (evt.code === 'Escape') {
-        onClose();
+        handleClose();
       }
     }
     document.addEventListener('keydown', handleEscKey);
@@ -29,7 +37,7 @@ export default function NoteModal({ onClose }: NoteModalProps) {
       document.removeEventListener('keydown', handleEscKey);
       document.body.style.overflow = '';
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   return createPortal(
     <div
@@ -38,9 +46,7 @@ export default function NoteModal({ onClose }: NoteModalProps) {
       role="dialog"
       aria-modal="true"
     >
-      <div className={css.modal}>
-        <NoteForm onClose={onClose} />
-      </div>
+      <div className={css.modal}>{children}</div>
     </div>,
     document.body
   );

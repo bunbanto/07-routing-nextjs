@@ -7,7 +7,8 @@ import { fetchNotes, FetchNotesHTTPResponse } from '@/lib/api';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import NoteList from '@/components/NoteList/NoteList';
-import NoteModal from '@/components/NoteModal/NoteModal';
+import Modal from '@/components/Modal/Modal';
+import NoteForm from '@/components/NoteForm/NoteForm';
 import { useDebounce } from 'use-debounce';
 import css from '@/app/notes/filter/[...slug]/Notes.client.module.css';
 import Loader from '@/components/Loader/Loader';
@@ -65,7 +66,11 @@ export default function NotesClient({
       {data?.notes?.length === 0 && !isLoading && <p>No notes found.</p>}
       {data?.notes?.length > 0 && <NoteList notes={data.notes} />}
 
-      {isModalOpen && <NoteModal onClose={() => setIsModalOpen(false)} />}
+      {isModalOpen && (
+        <Modal onClose={() => setIsModalOpen(false)}>
+          <NoteForm onClose={() => setIsModalOpen(false)} />
+        </Modal>
+      )}
     </div>
   );
 }

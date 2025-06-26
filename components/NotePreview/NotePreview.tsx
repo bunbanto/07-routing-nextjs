@@ -1,13 +1,20 @@
 'use client';
 
-import { FC } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useParams } from 'next/navigation';
 import { getNoteById } from '@/lib/api';
-import css from './NoteDetails.module.css';
+import { useRouter } from 'next/navigation';
+import css from './NotePreview.module.css';
+import { useCallback } from 'react';
 
-const NoteDetailsClient: FC = () => {
-  const { id } = useParams<{ id: string }>();
+type Props = {
+  id: string;
+};
+
+export default function NotePreview({ id }: Props) {
+  const router = useRouter();
+  const handleClose = useCallback(() => {
+    router.back();
+  }, [router]);
 
   const {
     data: note,
@@ -28,7 +35,9 @@ const NoteDetailsClient: FC = () => {
       <div className={css.item}>
         <div className={css.header}>
           <h2>{note.title}</h2>
-          <button className={css.editBtn}>Edit note</button>
+          <button onClick={handleClose} className={css.backBtn}>
+            go Back
+          </button>
         </div>
         <p className={css.content}>{note.content}</p>
         <div className={css.tagdate}>
@@ -47,6 +56,4 @@ const NoteDetailsClient: FC = () => {
       </div>
     </div>
   );
-};
-
-export default NoteDetailsClient;
+}
