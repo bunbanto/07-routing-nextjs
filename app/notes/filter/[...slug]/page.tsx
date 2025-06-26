@@ -1,14 +1,14 @@
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes as fetchNotesApi } from '@/lib/api';
 import NoteClient from './Notes.client';
 
-type Props = {
+interface PageProps {
   params: { slug: string[] };
-};
+}
 
-const Notes = async ({ params }: Props) => {
-  const { slug } = params;
+const Page = async ({ params }: PageProps) => {
+  const { slug } = await params;
   const category = slug[0] === 'all' ? undefined : slug[0];
-  const response = await fetchNotes({ page: 1, search: '', tag: category });
+  const response = await fetchNotesApi({ page: 1, search: '', tag: category });
 
   return (
     <section>
@@ -22,4 +22,4 @@ const Notes = async ({ params }: Props) => {
   );
 };
 
-export default Notes;
+export default Page;
