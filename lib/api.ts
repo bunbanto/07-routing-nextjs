@@ -32,7 +32,7 @@ export async function fetchNotes({
     page,
     perPage: 12,
     ...(search && { search }),
-    ...(tag && { tag }),
+    ...(tag && tag !== 'All' && { tag }),
   };
 
   const { data } = await axios.get<FetchNotesHTTPResponse>('/notes', {
