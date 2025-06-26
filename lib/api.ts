@@ -6,12 +6,12 @@ axios.defaults.baseURL = 'https://notehub-public.goit.study/api';
 axios.defaults.headers.common['Authorization'] = `Bearer ${KEY}`;
 axios.defaults.headers.common['Accept'] = 'application/json';
 
-interface FetchNotesHTTPResponse {
+export interface FetchNotesHTTPResponse {
   notes: Note[];
   totalPages: number;
 }
 
-interface FetchNotesParams {
+export interface FetchNotesParams {
   search?: string;
   page?: number;
   tag?: string;
