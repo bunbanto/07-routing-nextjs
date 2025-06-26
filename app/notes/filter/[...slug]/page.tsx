@@ -1,4 +1,4 @@
-import { fetchNotes as fetchNotesApi } from '@/lib/api';
+import { fetchNotes } from '@/lib/api';
 import NoteClient from './Notes.client';
 
 interface Props {
@@ -8,7 +8,7 @@ interface Props {
 const Page = async ({ params }: Props) => {
   const { slug } = await params;
   const category = slug[0] === 'all' ? undefined : slug[0];
-  const response = await fetchNotesApi({ page: 1, search: '', tag: category });
+  const response = await fetchNotes({ page: 1, search: '', tag: category });
 
   return (
     <section>
