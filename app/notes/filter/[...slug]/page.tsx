@@ -7,17 +7,12 @@ interface Props {
 
 const Page = async ({ params }: Props) => {
   const { slug } = await params;
-  const category = slug[0] === 'all' ? undefined : slug[0];
-  const response = await fetchNotes({ page: 1, search: '', tag: category });
+  const tag = slug[0] === 'all' ? undefined : slug[0];
+  const response = await fetchNotes({ page: 1, search: '', tag: tag });
 
   return (
     <section>
-      <NoteClient
-        initialData={response}
-        category={category}
-        notes={response.notes}
-        totalPages={response.totalPages}
-      />
+      <NoteClient initialData={response} tag={tag} />
     </section>
   );
 };

@@ -1,8 +1,8 @@
 'use client';
 
-import type { Note } from '@/types/note';
+//import type { Note } from '@/types/note';
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { fetchNotes, FetchNotesHTTPResponse } from '@/lib/api';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
@@ -14,17 +14,11 @@ import css from '@/app/notes/filter/[...slug]/Notes.client.module.css';
 import Loader from '@/components/Loader/Loader';
 
 interface NotesClientProps {
-  notes: Note[];
-  totalPages: number;
   initialData?: FetchNotesHTTPResponse;
-  category?: string;
+  tag?: string;
 }
 
-export default function NotesClient({
-  notes,
-  totalPages,
-  category,
-}: NotesClientProps) {
+export default function NotesClient({ tag, initialData }: NotesClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch] = useDebounce(searchQuery, 500);
   const [page, setPage] = useState(1);
@@ -32,11 +26,10 @@ export default function NotesClient({
 
   const { data, isLoading, error, isFetching } =
     useQuery<FetchNotesHTTPResponse>({
-      queryKey: ['notes', category, debouncedSearch, page],
-      queryFn: () =>
-        fetchNotes({ search: debouncedSearch, page, tag: category }),
-      placeholderData: () => ({ notes: [], totalPages: 1 }),
-      initialData: { notes, totalPages },
+      queryKey: ['notes', tag, debouncedSearch, page],
+      queryFn: () => fetchNotes({ search: debouncedSearch, page, tag }),
+      placeholderData: keepPreviousData,
+      initialData,
     });
 
   return (
@@ -48,9 +41,9 @@ export default function NotesClient({
             setPage(1);
           }}
         />
-        {data?.totalPages > 1 && (
+        {(data?.totalPages ?? 0) > 1 && (
           <Pagination
-            totalPages={data.totalPages}
+            totalPages={data?.totalPages ?? 0}
             currentPage={page}
             onPageChange={setPage}
           />
@@ -60,11 +53,11 @@ export default function NotesClient({
         </button>
       </div>
 
-      {isLoading && <Loader />}
-      {error && <p>{(error as Error).message || 'Failed to load notes.'}</p>}
+      {error instanceof Error && <p>{error.message}</p>}
+      {error && !(error instanceof Error) && <p>Failed to load notes.</p>}
       {isFetching && !isLoading && <Loader />}
       {data?.notes?.length === 0 && !isLoading && <p>No notes found.</p>}
-      {data?.notes?.length > 0 && <NoteList notes={data.notes} />}
+      {data?.notes && data.notes.length > 0 && <NoteList notes={data.notes} />}
 
       {isModalOpen && (
         <Modal onClose={() => setIsModalOpen(false)}>

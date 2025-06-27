@@ -3,18 +3,25 @@ import { useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 
-interface NoteModalProps {
+interface ModalProps {
   onClose?: () => void;
+  GoBack?: boolean;
   children?: React.ReactNode;
 }
 
-export default function NoteModal({ onClose, children }: NoteModalProps) {
+export default function Modal({
+  onClose,
+  GoBack = false,
+  children,
+}: ModalProps) {
   const router = useRouter();
 
   const handleClose = useCallback(() => {
     onClose?.();
-    router.back();
-  }, [onClose, router]);
+    if (GoBack) {
+      router.back();
+    }
+  }, [onClose, GoBack, router]);
 
   const handleBackDropClick = useCallback(
     (evt: React.MouseEvent<HTMLDivElement>) => {
@@ -31,13 +38,24 @@ export default function NoteModal({ onClose, children }: NoteModalProps) {
         handleClose();
       }
     }
+
     document.addEventListener('keydown', handleEscKey);
     document.body.style.overflow = 'hidden';
+
     return () => {
       document.removeEventListener('keydown', handleEscKey);
       document.body.style.overflow = '';
     };
   }, [handleClose]);
+
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement;
+    const modal = document.querySelector('[role="dialog"]') as HTMLElement;
+    modal?.focus();
+    return () => {
+      previouslyFocused?.focus();
+    };
+  }, []);
 
   return createPortal(
     <div
@@ -45,6 +63,7 @@ export default function NoteModal({ onClose, children }: NoteModalProps) {
       onClick={handleBackDropClick}
       role="dialog"
       aria-modal="true"
+      tabIndex={-1}
     >
       <div className={css.modal}>{children}</div>
     </div>,
