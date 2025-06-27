@@ -13,10 +13,15 @@ const NotesSidebar = async () => {
 
   return (
     <aside>
-      <Link href={`/notes/filter/all`} className={styles.menuLink}>
+      {/* <Link href={`/notes/filter/all`} className={styles.menuLink}>
         All notes
-      </Link>
+      </Link> */}
       <ul className={styles.menuList}>
+        <li className={styles.menuItem}>
+          <Link href="/notes/filter/all" className={styles.menuLink}>
+            All notes
+          </Link>
+        </li>
         {tags.map(tag => (
           <li key={tag} className={styles.menuItem}>
             <Link href={`/notes/filter/${tag}`} className={styles.menuLink}>
