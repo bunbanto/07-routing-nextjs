@@ -8,6 +8,8 @@ import css from '@/app/@modal/(.)notes/[id]/NotePreview.client.module.css';
 import Loader from '@/components/Loader/Loader';
 import { getNoteById } from '@/lib/api';
 import type { Note } from '@/types/note';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function NoteDetailsClient() {
   const { id: numId } = useParams<{ id: string }>();
@@ -36,7 +38,7 @@ export default function NoteDetailsClient() {
             <div className={css.header}>
               <h2>{note.title}</h2>
               <button onClick={handleClose} className={css.backBtn}>
-                go Back
+                <FontAwesomeIcon icon={faArrowLeft} /> Back
               </button>
             </div>
             <p className={css.content}>{note.content}</p>
